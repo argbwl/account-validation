@@ -2,29 +2,40 @@ package com.ab.ui.pojo;
 
 import java.util.Date;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(value = Include.NON_NULL)
 public class OpenAccountInfo {
 	
+	@NotBlank(message = "firstName must not null")
 	private String firstName;
 	private String lastName;
 	private String middleName;
 	private Date dob;
 	private String pob;
+	@NotNull(message = "gender must not be null")
 	private String gender;
 	private String acctType;
 	private String pincode;
 	private String city;
 	private String state;
+	@NotNull(message = "contactNo must not null and max length is upto 10 digit")
+	@Pattern(regexp = "^\\d{10}$")
 	private String contactNo;
 	private String address;
+	@Email(message = "Inavalid emailId")
 	private String emailId;
 	
 	public String getFirstName() {
 		return firstName;
 	}
+	
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}

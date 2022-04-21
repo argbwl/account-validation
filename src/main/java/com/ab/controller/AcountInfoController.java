@@ -3,6 +3,8 @@ package com.ab.controller;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +44,7 @@ public class AcountInfoController {
 	}
 	
 	@PostMapping("/open-act")
-	public AccountInfo openNewAccount(@RequestBody OpenAccountInfo openAccountInfo) {
+	public AccountInfo openNewAccount(@RequestBody @Valid OpenAccountInfo openAccountInfo) {
 		logger.info("Request Received to open new Account {}",openAccountInfo);
 		AccountInfo accountInfo = accountInfoService.openNewAccount(openAccountInfo);
 		logger.info("Account opened for {}",accountInfo);
