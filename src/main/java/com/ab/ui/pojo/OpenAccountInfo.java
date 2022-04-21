@@ -20,6 +20,7 @@ public class OpenAccountInfo {
 	private String state;
 	private String contactNo;
 	private String address;
+	private String emailId;
 	
 	public String getFirstName() {
 		return firstName;
@@ -93,14 +94,20 @@ public class OpenAccountInfo {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+	
+	public String getEmailId() {
+		return emailId;
+	}
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+	
 	@Override
 	public String toString() {
 		return "OpenAccountInfo [firstName=" + firstName + ", lastName=" + lastName + ", middleName=" + middleName
 				+ ", dob=" + dob + ", pob=" + pob + ", gender=" + gender + ", acctType=" + acctType + ", pincode="
 				+ pincode + ", city=" + city + ", state=" + state + ", contactNo=" + contactNo + ", address=" + address
-				+ "]";
+				+ ", emailId=" + emailId + "]";
 	}
-	
-	
 
 }

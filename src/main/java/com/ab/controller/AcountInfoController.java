@@ -3,8 +3,6 @@ package com.ab.controller;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ab.exception.AccountValidationException;
+import com.ab.logger.AVLogger;
 import com.ab.pojo.AccountInfo;
 import com.ab.service.IAccountInfoService;
 import com.ab.ui.pojo.OpenAccountInfo;
@@ -25,7 +24,7 @@ import com.ab.ui.pojo.OpenAccountInfo;
 @CrossOrigin
 public class AcountInfoController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(AcountInfoController.class);
+	private static final AVLogger logger = AVLogger.getLogger(AcountInfoController.class);
 	
 	@Autowired
 	private IAccountInfoService accountInfoService;
@@ -44,8 +43,10 @@ public class AcountInfoController {
 	
 	@PostMapping("/open-act")
 	public AccountInfo openNewAccount(@RequestBody OpenAccountInfo openAccountInfo) {
-		System.out.println(openAccountInfo);
+		logger.info("Request Received to open new Account {}",openAccountInfo);
 		AccountInfo accountInfo = accountInfoService.openNewAccount(openAccountInfo);
+		logger.info("Account opened for {}",accountInfo);
+		
 		return accountInfo;
 	}
 	

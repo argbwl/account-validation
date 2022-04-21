@@ -22,6 +22,7 @@ public class AccountInfoEntity extends DefaultColumnEntity {
 	private String lastName;
 	private String middleName;
 	private Date dob;
+	private String emailId;
 	private String pob;
 	private String gender;
 	private String acctType;
@@ -160,4 +161,12 @@ public class AccountInfoEntity extends DefaultColumnEntity {
 		this.address = address;
 	}
 
+	public String getEmailId() {
+		return emailId;
+	}
+
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+	
 }

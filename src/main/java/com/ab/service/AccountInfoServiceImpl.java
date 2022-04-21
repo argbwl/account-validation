@@ -151,8 +151,14 @@ public class AccountInfoServiceImpl implements IAccountInfoService {
 		accountInfoEntity.setAccountNumber(accountNumber);
 		accountInfoEntity.setAccountStatus(StatusEnum.inactive.getStatus());
 		logger.info("Account Info Entity for account openning {}", JsonUtil.toJson(accountInfoEntity));
-		accountInfoRepo.save(accountInfoEntity);
-		return null;
+		AccountInfoEntity savedEntity = accountInfoRepo.save(accountInfoEntity);
+		
+		AccountInfo returnSavedInfo = new AccountInfo();
+		returnSavedInfo.setAccId(String.valueOf(savedEntity.getId()));
+		returnSavedInfo.setAccountName(savedEntity.getAccountName());
+		returnSavedInfo.setAccountNumber(savedEntity.getAccountNumber());
+		returnSavedInfo.setAccountStatus(savedEntity.getAccountStatus());
+		return returnSavedInfo;
 	}
 
 	@Override
