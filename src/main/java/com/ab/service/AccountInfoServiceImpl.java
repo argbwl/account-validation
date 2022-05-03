@@ -1,5 +1,6 @@
 package com.ab.service;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +20,11 @@ import com.ab.constant.AccountValidationConstant;
 import com.ab.entity.AccountInfoEntity;
 import com.ab.enumpkg.StatusEnum;
 import com.ab.exception.AccountValidationException;
+import com.ab.exception.ExternalSystemException;
 import com.ab.pojo.AccountInfo;
+import com.ab.pojo.OpenAccountRequest;
 import com.ab.repo.AccountInfoRepo;
+import com.ab.template.ApiCallService;
 import com.ab.ui.pojo.OpenAccountInfo;
 import com.ab.util.AccountUtil;
 import com.ab.util.BankMapUtil;
@@ -32,6 +38,9 @@ public class AccountInfoServiceImpl implements IAccountInfoService {
 
 	@Autowired
 	private AccountInfoRepo accountInfoRepo;
+	
+	@Autowired
+	private ApiCallService apiCallService;
 
 	@Override
 	public AccountInfoEntity saveAccountInfo(AccountInfo accountInfo) {
@@ -140,38 +149,42 @@ public class AccountInfoServiceImpl implements IAccountInfoService {
 	}
 
 	@Override
-	public AccountInfo openNewAccount(OpenAccountInfo openAccountInfo) {
+	public AccountInfo openNewAccount(OpenAccountInfo openAccountInfo) throws ExternalSystemException {
 		AccountInfoEntity accountInfoEntity = new AccountInfoEntity();
+		AccountInfo returnSavedInfo = new AccountInfo();
 		
 		String accountName = AccountUtil.getAccountName(openAccountInfo);
-		String accountNumber = fetchNewAccountNumber(openAccountInfo);
-		
-		BeanUtils.copyProperties(openAccountInfo, accountInfoEntity);
-		accountInfoEntity.setAccountName(accountName);
-		accountInfoEntity.setAccountNumber(accountNumber);
-		accountInfoEntity.setAccountStatus(StatusEnum.inactive.getStatus());
-		logger.info("Account Info Entity for account openning {}", JsonUtil.toJson(accountInfoEntity));
-		AccountInfoEntity savedEntity = accountInfoRepo.save(accountInfoEntity);
-		
-		AccountInfo returnSavedInfo = new AccountInfo();
-		returnSavedInfo.setAccId(String.valueOf(savedEntity.getId()));
-		returnSavedInfo.setAccountName(savedEntity.getAccountName());
-		returnSavedInfo.setAccountNumber(savedEntity.getAccountNumber());
-		returnSavedInfo.setAccountStatus(savedEntity.getAccountStatus());
+		try {
+			String accountNumber = fetchNewAccountNumber(openAccountInfo);
+			BeanUtils.copyProperties(openAccountInfo, accountInfoEntity);
+			accountInfoEntity.setAccountName(accountName);
+			accountInfoEntity.setAccountNumber(accountNumber);
+			accountInfoEntity.setAccountStatus(StatusEnum.inactive.getStatus());
+			logger.info("Account Info Entity for account openning {}", JsonUtil.toJson(accountInfoEntity));
+			AccountInfoEntity savedEntity = accountInfoRepo.save(accountInfoEntity);
+			returnSavedInfo.setAccId(String.valueOf(savedEntity.getId()));
+			returnSavedInfo.setAccountName(savedEntity.getAccountName());
+			returnSavedInfo.setAccountNumber(savedEntity.getAccountNumber());
+			returnSavedInfo.setAccountStatus(savedEntity.getAccountStatus());
+		}catch(ExternalSystemException ex) {
+			if(AccountValidationConstant.FETCH_NEW_ACT_NO_URI.equals(ex.getMessage())) {
+				throw new ExternalSystemException(ex.getMessage(), "Unable to Fetch New Account No", ex.getHttpStatus(), ex.getErrorCode());
+			}
+		}
 		return returnSavedInfo;
 	}
 
 	@Override
-	public String fetchNewAccountNumber(OpenAccountInfo openAccountInfo) {
-		String currentTime = String.valueOf(new Date().getTime());
-		String finalnewAccountNo = null;
+	public String fetchNewAccountNumber(OpenAccountInfo openAccountInfo) throws ExternalSystemException {
 		logger.info("Creating new Account Number for {}",openAccountInfo);
-		if(null!=openAccountInfo) {
-			String cityCode = BankMapUtil.getBranchCodeByBankName(openAccountInfo.getCity());
-			String stateCode = BankMapUtil.getBankCodeByBankName(openAccountInfo.getState());
-			finalnewAccountNo = stateCode.concat(cityCode).concat(currentTime);
+		String finalnewAccountNo = null;
+		OpenAccountRequest accountRequest = new OpenAccountRequest();
+		accountRequest.setCity(openAccountInfo.getCity());
+		accountRequest.setState(openAccountInfo.getState());
+		ResponseEntity<Object> response = apiCallService.callExtrenalAPI(AccountValidationConstant.FETCH_NEW_ACT_NO_URI, HttpMethod.POST, accountRequest);
+		if(response!=null) {
+			finalnewAccountNo = response.getBody().toString();
 			logger.info("Created new Account Number for {} is {}", openAccountInfo.getFirstName(), finalnewAccountNo);
-			
 		}
 		return finalnewAccountNo;
 	}

@@ -8,5 +8,7 @@ public class AccountValidationConstant {
 	public static final String ERROR_3015 = "3015";
 	public static final String ERROR_2004 = "2004";
 	public static final String CODE_LOWER_CASE = "code";
+	public static final String ERROR_4012 = "4012";
+	public static final String FETCH_NEW_ACT_NO_URI = "fchNwActNo";
 
 }

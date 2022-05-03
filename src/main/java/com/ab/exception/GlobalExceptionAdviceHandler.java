@@ -43,6 +43,20 @@ public class GlobalExceptionAdviceHandler extends ResponseEntityExceptionHandler
 		return new ResponseEntity<>(apiException, ex.getHttpStatus());
 	}
 	
+	@ExceptionHandler(ExternalSystemException.class)
+	public final ResponseEntity<APIException> handleExternalSystemException(ExternalSystemException ex){
+		StaticDataInfo info = staticDataService.retriveDataByKeyNameParam(AccountValidationConstant.CODE_LOWER_CASE, ex.getErrorCode());
+		APIException apiException = new APIException();
+		apiException.setDetails(ex.getDetails());
+		//apiException.setMessage(ex.getMessage());
+		apiException.setStatus(ex.getHttpStatus());
+		if(null!=info) {
+			apiException.setErrorCode(info.getKeyParam());
+			apiException.setErrorDesc(info.getKeyValue());
+		}
+		return new ResponseEntity<>(apiException, ex.getHttpStatus());
+	}
+	
 	
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<APIException> handleUnknownException(Exception ex){

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ab.exception.AccountValidationException;
+import com.ab.exception.ExternalSystemException;
 import com.ab.logger.AVLogger;
 import com.ab.pojo.AccountInfo;
 import com.ab.service.IAccountInfoService;
@@ -44,7 +45,7 @@ public class AcountInfoController {
 	}
 	
 	@PostMapping("/open-act")
-	public AccountInfo openNewAccount(@RequestBody @Valid OpenAccountInfo openAccountInfo) {
+	public AccountInfo openNewAccount(@RequestBody @Valid OpenAccountInfo openAccountInfo) throws ExternalSystemException {
 		logger.info("Request Received to open new Account {}",openAccountInfo);
 		AccountInfo accountInfo = accountInfoService.openNewAccount(openAccountInfo);
 		logger.info("Account opened for {}",accountInfo);
@@ -53,7 +54,7 @@ public class AcountInfoController {
 	}
 	
 	@PostMapping("/fch-nw-act")
-	public String fetchNewAccountNumber(@RequestBody OpenAccountInfo openAccountInfo) {
+	public String fetchNewAccountNumber(@RequestBody OpenAccountInfo openAccountInfo) throws ExternalSystemException {
 		logger.info("Received account Number creation request for New Account Number {}",openAccountInfo);
 		return accountInfoService.fetchNewAccountNumber(openAccountInfo);
 	}
