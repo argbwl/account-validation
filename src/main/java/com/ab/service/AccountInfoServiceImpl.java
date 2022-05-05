@@ -1,10 +1,10 @@
 package com.ab.service;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +22,12 @@ import com.ab.enumpkg.StatusEnum;
 import com.ab.exception.AccountValidationException;
 import com.ab.exception.ExternalSystemException;
 import com.ab.pojo.AccountInfo;
+import com.ab.pojo.CommonHeader;
 import com.ab.pojo.OpenAccountRequest;
 import com.ab.repo.AccountInfoRepo;
 import com.ab.template.ApiCallService;
 import com.ab.ui.pojo.OpenAccountInfo;
 import com.ab.util.AccountUtil;
-import com.ab.util.BankMapUtil;
 import com.ab.util.JsonUtil;
 
 @Service
@@ -181,6 +181,7 @@ public class AccountInfoServiceImpl implements IAccountInfoService {
 		OpenAccountRequest accountRequest = new OpenAccountRequest();
 		accountRequest.setCity(openAccountInfo.getCity());
 		accountRequest.setState(openAccountInfo.getState());
+		accountRequest.setHeader(new CommonHeader(String.valueOf(new Random().nextInt(999999)), "ActInfo"));
 		ResponseEntity<Object> response = apiCallService.callExtrenalAPI(AccountValidationConstant.FETCH_NEW_ACT_NO_URI, HttpMethod.POST, accountRequest);
 		if(response!=null) {
 			finalnewAccountNo = response.getBody().toString();

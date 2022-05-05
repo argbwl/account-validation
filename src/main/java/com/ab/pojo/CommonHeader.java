@@ -12,6 +12,16 @@ public class CommonHeader {
 
 	@JsonProperty("source")
 	private String source;
+	
+	public CommonHeader() {
+		super();
+	}
+
+	public CommonHeader(String messageId, String source) {
+		super();
+		this.messageId = messageId;
+		this.source = source;
+	}
 
 	public String getMessageId() {
 		return messageId;
