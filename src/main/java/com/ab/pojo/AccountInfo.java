@@ -18,6 +18,8 @@ public class AccountInfo {
 	private String accountNumber;
 	@JsonProperty("accName")
 	private String accountName;
+	@JsonProperty("closingStatus")
+	private String closingStatus;
 
 	private String checkStatus;
 	private String accId;
@@ -77,11 +79,20 @@ public class AccountInfo {
 	public void setAccId(String accId) {
 		this.accId = accId;
 	}
+	
+	public String getClosingStatus() {
+		return closingStatus;
+	}
+
+	public void setClosingStatus(String closingStatus) {
+		this.closingStatus = closingStatus;
+	}
 
 	@Override
 	public String toString() {
 		return "AccountInfo [header=" + header + ", id=" + id + ", accountStatus=" + accountStatus + ", accountNumber="
-				+ accountNumber + ", accountName=" + accountName + "]";
+				+ accountNumber + ", accountName=" + accountName + ", closingStatus=" + closingStatus + ", checkStatus="
+				+ checkStatus + ", accId=" + accId + "]";
 	}
 
 }

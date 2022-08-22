@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -126,6 +127,7 @@ public class AccountInfoServiceImpl implements IAccountInfoService {
 			info.setAccountName(a.getAccountName());
 			info.setAccountNumber(a.getAccountNumber());
 			info.setAccountStatus(a.getAccountStatus());
+			info.setClosingStatus(a.getClosingStatus());
 			infoList.add(info);
 		});
 		logger.info("Retrived AccountInfoList, Size {}",infoList.size());
@@ -230,5 +232,31 @@ public class AccountInfoServiceImpl implements IAccountInfoService {
 		});
 		return infoList;
 	}
-	
+
+	@Override
+	public List<AccountInfo> getAccountInfoListForClose() throws AccountValidationException {
+		List<AccountInfo> acctList = getAccountInfoList();
+		
+		acctList.forEach(acInfo ->{
+			if(StringUtils.isBlank(acInfo.getClosingStatus()) || acInfo.getClosingStatus().equalsIgnoreCase("Open")) {
+				acInfo.setClosingStatus("Close");
+			}
+		});
+		return acctList;
+	}
+
+	@Override
+	public int updateAccountInfoClosingStatusByActNum(String status, String actNumber) {
+		logger.info("closing account for account number {} with status {}",actNumber, status);
+		return accountInfoRepo.updateClosingStatusById(status, actNumber);
+	}
+
+	@Override
+	public boolean isAccountExistByContactNo(String contactNo) {
+		logger.info("Start checking if account already exist with contact number {}",contactNo);
+		AccountInfoEntity accountInfo = accountInfoRepo.findByContactNo(contactNo);
+		logger.info("account info status based on contact no availability {}",accountInfo);
+		return null==accountInfo?false:true;
+	}
+
 }

@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "accoutn_info")
+@Table(name = "account_info")
 public class AccountInfoEntity extends DefaultColumnEntity {
 
 	@Id
@@ -31,6 +31,7 @@ public class AccountInfoEntity extends DefaultColumnEntity {
 	private String state;
 	private String contactNo;
 	private String address;
+	private String closingStatus;
 	
 
 	public int getId() {
@@ -167,6 +168,14 @@ public class AccountInfoEntity extends DefaultColumnEntity {
 
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
+	}
+
+	public String getClosingStatus() {
+		return closingStatus;
+	}
+
+	public void setClosingStatus(String closingStatus) {
+		this.closingStatus = closingStatus;
 	}
 	
 }

@@ -25,8 +25,8 @@ public class OpenAccountInfo {
 	private String pincode;
 	private String city;
 	private String state;
-	@NotNull(message = "contactNo must not null and max length is upto 10 digit")
-	@Pattern(regexp = "^\\d{10}$")
+	@NotNull(message = "contactNo must not null and max length is upto 10-12 digit")
+	@Pattern(regexp = "^\\d{10,12}$")
 	private String contactNo;
 	private String address;
 	@Email(message = "Inavalid emailId")

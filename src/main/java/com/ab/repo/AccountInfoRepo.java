@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -22,4 +23,9 @@ public interface AccountInfoRepo extends JpaRepository<AccountInfoEntity, Intege
 	@Query("select a from AccountInfoEntity a where a.createDt < :createdDt and a.accountStatus =:accountStatus")
 	public List<AccountInfoEntity> findByGreateThanDateAndStatus(@Param("createdDt") Date daysInterval, @Param("accountStatus") String accountStatus);
 
+	@Modifying
+	@Query("update AccountInfoEntity e set e.closingStatus = :status where e.accountNumber = :accountNumber")
+	public int updateClosingStatusById(@Param("status") String status, @Param("accountNumber") String accountNumber);
+
+	public AccountInfoEntity findByContactNo(String contactNo);
 }
